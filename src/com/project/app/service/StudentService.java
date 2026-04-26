@@ -141,7 +141,7 @@ public class StudentService {
                 System.out.println(
                 	    "Course: " + r.getCourseName() +
                 	    " | Fee: " + r.getFeesPaid()
-                	);
+                	));
                         
             }
 
