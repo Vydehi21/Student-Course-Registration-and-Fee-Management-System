@@ -5,7 +5,7 @@ import java.util.*;
 
 import com.project.app.model.Student;
 
-public class StudentDAOImpl implements StudentDAO {
+public class StudentDAOImplementation implements StudentDAO {
 
     @Override
     public int add(Connection con, Student s) throws SQLException {

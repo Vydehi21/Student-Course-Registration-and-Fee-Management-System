@@ -5,7 +5,7 @@ import java.util.*;
 
 import com.project.app.model.Registration;
 
-public class RegistrationDAOImpl implements RegistrationDAO {
+public class RegistrationDAOImplementation implements RegistrationDAO {
 
     @Override
     public int register(Connection con, int id, String course, double fee) throws SQLException {
@@ -128,24 +128,28 @@ public class RegistrationDAOImpl implements RegistrationDAO {
         try (PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
 
-            while (rs.next()) {
+        	while (rs.next()) {
 
-                String course = rs.getString("course_name");
+        	    int id = rs.getInt("id");
+        	    String name = rs.getString("name");
+        	    String course = rs.getString("course_name");
 
-                if (course == null) {
-                    list.add(
-                            rs.getInt("id") + " | " +
-                            rs.getString("name") + " | No Courses"
-                    );
-                } else {
-                    list.add(
-                            rs.getInt("id") + " | " +
-                            rs.getString("name") + " | " +
-                            course + " | " +
-                            rs.getDouble("fees_paid")
-                    );
-                }
-            }
+        	    if (course == null) {
+        	        list.add(
+        	                "ID: " + id +
+        	                " | Name: " + name +
+        	                " | Course: N/A" +
+        	                " | Fee: 0"
+        	        );
+        	    } else {
+        	        list.add(
+        	                "ID: " + id +
+        	                " | Name: " + name +
+        	                " | Course: " + course +
+        	                " | Fee: " + rs.getDouble("fees_paid")
+        	        );
+        	    }
+        	}
         }
         return list;
     }

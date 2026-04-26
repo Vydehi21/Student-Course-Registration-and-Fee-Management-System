@@ -9,9 +9,11 @@ import com.project.app.model.*;
 import com.project.app.util.*;
 
 public class StudentService {
+	
+	private static final int MAX_AGE = 100;
 
-    private StudentDAO studentDAO = new StudentDAOImpl();
-    private RegistrationDAO registrationDAO = new RegistrationDAOImpl();
+    private StudentDAO studentDAO = new StudentDAOImplementation();
+    private RegistrationDAO registrationDAO = new RegistrationDAOImplementation();
 
     // 1. Add Student
     public void addStudent(Student s) throws ApplicationException {
@@ -27,8 +29,8 @@ public class StudentService {
             if (s.getName() == null || s.getName().trim().isEmpty())
                 throw new InvalidInputException("Name cannot be empty");
 
-            if (s.getAge() <= 0)
-                throw new InvalidInputException("Age must be > 0");
+            if (s.getAge() <= 0 || s.getAge() > MAX_AGE)
+                throw new InvalidInputException("Age must be between 1 and " + MAX_AGE);
 
             if (studentDAO.exists(con, s.getStudentId()))
                 throw new DuplicateStudentException("Student already exists");
@@ -136,7 +138,11 @@ public class StudentService {
                 System.out.println("No registrations");
             } else {
                 list.forEach(r ->
-                        System.out.println(r.getCourseName() + " - " + r.getFeesPaid()));
+                System.out.println(
+                	    "Course: " + r.getCourseName() +
+                	    " | Fee: " + r.getFeesPaid()
+                	);
+                        
             }
 
         } catch (Exception e) {
@@ -187,11 +193,13 @@ public class StudentService {
         Connection con = DBUtil.getConnection();
 
         try {
-            if (fee <= 0)
-                throw new InvalidInputException("Fee must be > 0");
 
             if (!studentDAO.exists(con, studentId))
                 throw new StudentNotFoundException("Student not found");
+            
+            if (fee <= 0)
+                throw new InvalidInputException("Fee must be > 0");
+            
 
             int rows = registrationDAO.updateFee(con, studentId, course, fee);
 
@@ -215,6 +223,11 @@ public class StudentService {
         Connection con = DBUtil.getConnection();
 
         try {
+        	
+        	if (course == null || course.trim().isEmpty()) {
+        	    throw new InvalidInputException("Course cannot be empty");
+        	}
+        	
             if (!studentDAO.exists(con, studentId))
                 throw new StudentNotFoundException("Student not found");
 
